@@ -21,32 +21,27 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 
 # Запуск FastAPI
-uvicorn app:app --reload --host 127.0.0.1 --port 8000
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
-//ToDo creane .env look exaple
+Для AI-функций админки: скопируйте `backend/.env.example` в `backend/.env` и впишите `GEMINI_API_KEY`.
+Без ключа сервер запускается, AI-эндпоинты отвечают 503.
 **Одной строкой**
 ```
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app:app --reload --host 127.0.0.1 --port 8000
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
-**Одной строкой** LLM
-```
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn appG:app --reload --host 127.0.0.1 --port 8000
-```
+> `backend-1/` — старый пример работы с LLM (`app.py`, `appG.py`), запускается отдельно из папки `backend-1`.
+> Основной backend — `backend/`, точка входа `main.py`.
 **Backend:** http://localhost:8000
 
 **API Documentation (Swagger):** http://localhost:8000/docs
 
 **Health check:** http://localhost:8000/api/health
 
-**План праздника:** http://localhost:8000/api/plan
+**Заказы (Admin):** http://localhost:8000/api/admin/orders
 
 **Остановка сервера:** `Ctrl + C`
 
