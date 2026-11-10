@@ -1,7 +1,5 @@
-
 import { useState } from "react";
-
-const API_URL = "http://localhost:8000/api/client-portrait";
+import { adminApi } from "./api";
 
 export default function ClientPortrait() {
 
@@ -19,7 +17,8 @@ export default function ClientPortrait() {
   });
 
   const [portrait, setPortrait] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [concepts, setConcepts] = useState("");
+  const [loading, setLoading] = useState("");
   const [error, setError] = useState("");
 
   function handleChange(event) {
@@ -33,42 +32,32 @@ export default function ClientPortrait() {
 
   async function generatePortrait(event) {
     event.preventDefault();
+    await run("portrait");
+  }
 
-    setLoading(true);
+  async function run(kind) {
+    setLoading(kind);
     setError("");
-    setPortrait("");
 
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(form)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.detail || "Не удалось создать портрет"
-        );
+      if (kind === "portrait") {
+        setPortrait("");
+        const data = await adminApi.portraitFromForm(form);
+        setPortrait(data.client_portrait.text);
+      } else {
+        setConcepts("");
+        const data = await adminApi.conceptsFromForm(form);
+        setConcepts(data.concepts.text);
       }
-
-      setPortrait(data.client_portrait);
-
     } catch (error) {
       setError(error.message);
-
     } finally {
-      setLoading(false);
+      setLoading("");
     }
   }
 
   return (
-    <div className="client-portrait">
+    <div className="client-portrait panel">
 
       <h2>Эмоциональный портрет заказчика</h2>
 
@@ -179,11 +168,19 @@ export default function ClientPortrait() {
           />
         </label>
 
-        <button type="submit" disabled={loading}>
-          {loading
-            ? "AI анализирует..."
-            : "Создать эмоциональный портрет"}
-        </button>
+        <div className="actions">
+          <button className="primary" type="submit" disabled={!!loading}>
+            {loading === "portrait"
+              ? "AI анализирует..."
+              : "Создать эмоциональный портрет"}
+          </button>
+
+          <button className="primary" type="button" disabled={!!loading} onClick={() => run("concepts")}>
+            {loading === "concepts"
+              ? "AI придумывает..."
+              : "3 концепции праздника"}
+          </button>
+        </div>
 
       </form>
 
