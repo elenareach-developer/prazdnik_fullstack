@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { adminApi } from "./api";
+import { SakuraButton, SakuraCard, SakuraLoader } from "../../shared/sakura";
 
 const EMPTY_CONTEXT = { client_role: "", location: "", concerns: "", success_criteria: "" };
 
@@ -53,13 +54,13 @@ export default function Orders() {
     <section className="panel">
       <div className="row-between">
         <h2>Заказы</h2>
-        <button className="small" onClick={load}>Обновить</button>
+        <SakuraButton variant="secondary" onClick={load}>Обновить</SakuraButton>
       </div>
 
       {dashboard && (
         <div className="stats">
-          <div><strong>{dashboard.orders_count}</strong><span>всего заказов</span></div>
-          <div><strong>{dashboard.new_orders}</strong><span>новых</span></div>
+          <SakuraCard index={0}><strong>{dashboard.orders_count}</strong><span>всего заказов</span></SakuraCard>
+          <SakuraCard index={1}><strong>{dashboard.new_orders}</strong><span>новых</span></SakuraCard>
         </div>
       )}
 
@@ -67,19 +68,26 @@ export default function Orders() {
 
       <div className="orders-layout">
         <ul className="order-list">
-          {orders.map((o) => (
+          {orders.map((o, index) => (
             <li key={o.id}>
-              <button className={o.id === selectedId ? "active" : ""} onClick={() => setSelectedId(o.id)}>
+              <SakuraCard
+                as="button"
+                type="button"
+                index={index}
+                active={o.id === selectedId}
+                aria-pressed={o.id === selectedId}
+                onClick={() => setSelectedId(o.id)}
+              >
                 #{o.id} · {o.celebration_type} · {o.date}
                 <small>{o.customer || "Заказчик"} · {o.status}</small>
-              </button>
+              </SakuraCard>
             </li>
           ))}
           {orders.length === 0 && <li className="muted">Заказов пока нет.</li>}
         </ul>
 
         {selected && (
-          <div className="order-detail">
+          <div className="order-detail sakura-fade-in" key={selected.id}>
             <h3>Заказ #{selected.id}</h3>
             <dl>
               <dt>Событие</dt><dd>{selected.celebration_type}</dd>
@@ -103,22 +111,30 @@ export default function Orders() {
             </details>
 
             <div className="actions">
-              <button className="primary" disabled={!!loading} onClick={() => runAI("portrait")}>
+              <SakuraButton disabled={!!loading} onClick={() => runAI("portrait")}>
                 {loading === "portrait" ? "AI анализирует..." : "Эмоциональный портрет"}
-              </button>
-              <button className="primary" disabled={!!loading} onClick={() => runAI("concepts")}>
+              </SakuraButton>
+              <SakuraButton disabled={!!loading} onClick={() => runAI("concepts")}>
                 {loading === "concepts" ? "AI придумывает..." : "3 концепции праздника"}
-              </button>
+              </SakuraButton>
             </div>
 
+            {loading && (
+              <SakuraLoader
+                text={loading === "portrait"
+                  ? "Составляем портрет заказчика..."
+                  : "Подбираем идеи для вашего праздника..."}
+              />
+            )}
+
             {selected.ai_portrait && (
-              <article className="portrait-result">
+              <article className="portrait-result sakura-fade-in" key={`p-${selected.ai_portrait.generated_at}`}>
                 <h4>Портрет заказчика</h4>
                 <div className="portrait-text">{selected.ai_portrait.text}</div>
               </article>
             )}
             {selected.ai_concepts && (
-              <article className="portrait-result">
+              <article className="portrait-result sakura-fade-in" key={`c-${selected.ai_concepts.generated_at}`}>
                 <h4>Концепции праздника</h4>
                 <div className="portrait-text">{selected.ai_concepts.text}</div>
               </article>

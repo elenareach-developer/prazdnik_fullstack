@@ -45,6 +45,17 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 **Остановка сервера:** `Ctrl + C`
 
+## Тема Sakura Festival 🌸
+
+Общая тема лежит в `frontend/shared/sakura/` и подключена к **admin** и **user**:
+падающие лепестки (`SakuraAnimation`), фон с горами и пагодой (`SakuraBackground`),
+лоадер-веточка для AI (`SakuraLoader`), анимация успеха (`SakuraCelebration`),
+`SakuraButton`, `SakuraCard` и панель настроек «🌸 Анимация» (вкл/выкл, количество,
+скорость, прозрачность — сохраняется в браузере). При системной настройке
+«уменьшить движение» (`prefers-reduced-motion`) лепестки и полёты отключаются.
+
+Порты: admin — http://localhost:5173, user — http://localhost:5174.
+
 ## Запуск frontend
 Worker 
 cd frontend
