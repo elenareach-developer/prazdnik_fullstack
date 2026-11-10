@@ -2,16 +2,14 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
+from shared.orders_store import ORDERS, add_order, find_order
+
 router = APIRouter()
 
 PACKAGES = [
     {"id": 1, "name": "Birthday Party", "price": 300, "description": "A simple celebration package."},
     {"id": 2, "name": "Premium Party", "price": 500, "description": "A fuller package with activities and decorations."},
 ]
-
-# Demo in-memory orders. Data resets when the server restarts.
-ORDERS = []
-_next_order_id = 1025
 
 class OrderCreate(BaseModel):
     celebration_type: str = "Birthday"
@@ -36,11 +34,7 @@ def get_package(package_id: int):
 
 @router.post("/orders")
 def create_order(order: OrderCreate):
-    global _next_order_id
-    created = order.model_dump()
-    created.update({"id": _next_order_id, "status": "new"})
-    _next_order_id += 1
-    ORDERS.append(created)
+    created = add_order(order.model_dump())
     return {"message": "Order created", "order": created}
 
 @router.get("/orders")
@@ -50,14 +44,14 @@ def list_customer_orders():
 
 @router.get("/orders/{order_id}")
 def get_customer_order(order_id: int):
-    order = next((item for item in ORDERS if item["id"] == order_id), None)
+    order = find_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
 
 @router.patch("/orders/{order_id}")
 def update_customer_order(order_id: int, changes: dict):
-    order = next((item for item in ORDERS if item["id"] == order_id), None)
+    order = find_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     allowed = {"theme", "preferences", "wishes", "budget", "date"}
@@ -68,7 +62,7 @@ def update_customer_order(order_id: int, changes: dict):
 
 @router.post("/orders/{order_id}/feedback")
 def add_feedback(order_id: int, feedback: dict):
-    order = next((item for item in ORDERS if item["id"] == order_id), None)
+    order = find_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     order["feedback"] = feedback
