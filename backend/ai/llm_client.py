@@ -42,4 +42,7 @@ def generate_text(prompt: str) -> str:
         )
     except Exception as error:
         raise AIGenerationError(f"Ошибка генерации: {error}") from error
-    return response.text or ""
+    text = (response.text or "").strip()
+    if not text:
+        raise AIGenerationError("Модель вернула пустой ответ. Попробуйте ещё раз.")
+    return text

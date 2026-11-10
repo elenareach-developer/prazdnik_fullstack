@@ -202,6 +202,18 @@ export default function ClientPortrait() {
         </section>
       )}
 
+      {concepts && (
+        <section className="portrait-result">
+
+          <h3>Концепции праздника</h3>
+
+          <div className="portrait-text">
+            {concepts}
+          </div>
+
+        </section>
+      )}
+
     </div>
   );
 }
