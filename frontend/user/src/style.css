@@ -27,3 +27,13 @@ textarea { min-height: 90px; resize: vertical; }
 pre { background: #f7f5f2; border-radius: 10px; padding: 14px; overflow: auto; }
 footer { text-align: center; margin-top: 26px; }
 @media (max-width: 600px) { .shell { padding: 24px 14px; } .panel { padding: 19px; } h1 { font-size: 32px; } }
+
+/* Sakura theme: customer page helpers (only under .sakura-theme) */
+.sakura-theme .connection { max-width: 380px; }
+.sakura-theme .dot { background: #F4A9C4; }
+.sakura-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.sakura-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.sakura-card-grid .sakura-card p { margin: 6px 0 10px; }
+.sakura-status { display: inline-block; font-size: 12px; font-weight: 700; color: #c9668e; background: #F8DCE8; border-radius: 999px; padding: 3px 10px; }
+.sakura-theme .idea.sakura-card { margin: 10px 0; }
+@media (max-width: 600px) { .sakura-form-row { grid-template-columns: 1fr; } }

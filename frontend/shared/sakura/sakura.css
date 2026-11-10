@@ -588,6 +588,10 @@ button.sakura-card { cursor: pointer; }
   line-height: 1.12;
 }
 
+@media (min-width: 601px) {
+  .sakura-hero h2 { max-width: min(560px, 60%); }
+}
+
 .sakura-hero p {
   position: relative;
   max-width: 440px;
@@ -596,9 +600,11 @@ button.sakura-card { cursor: pointer; }
   font-size: clamp(16px, 2.2vw, 19px);
 }
 
-.sakura-hero-kicker {
+.sakura-hero .sakura-hero-kicker {
   position: relative;
-  color: var(--sakura-gold);
+  margin: 0;
+  /* palette gold, darkened for readable contrast on white */
+  color: #a8823f;
   font-weight: 800;
   letter-spacing: .18em;
   font-size: 12px;
@@ -619,6 +625,12 @@ button.sakura-card { cursor: pointer; }
 }
 
 @media (max-width: 600px) {
+  /* Dropdown would overflow the screen edge when the header wraps: open inline instead. */
+  .sakura-controls-body {
+    position: static;
+    margin-top: 8px;
+    width: min(280px, calc(100vw - 32px));
+  }
   .sakura-hero-branch {
     width: 62%;
     right: -40px;
