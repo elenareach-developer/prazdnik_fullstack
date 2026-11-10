@@ -15,6 +15,10 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174/",
+        "http://127.0.0.1:5174",
+        "http://localhost:5175/",
+        "http://127.0.0.1:5175",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
@@ -115,6 +119,76 @@ def create_client_portrait(data: CelebrationData):
 
 Пиши на русском языке.
 Будь конкретным, деликатным и практичным.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=os.getenv(
+                "GEMINI_MODEL",
+                "gemini-3.5-flash-lite"
+            ),
+            contents=prompt
+        )
+
+        return {
+            "client_portrait": response.text
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Ошибка генерации: {str(error)}"
+        )
+
+
+@app.post("/api/client-talk")
+def create_client_portrait(data: CelebrationData):
+
+    if client is None:
+        raise HTTPException(
+            status_code=503,
+            detail="GEMINI_API_KEY не найден в backend/.env"
+        )
+
+    prompt = f"""
+
+На основе ИНФОРМАЦИЯ О ПРАЗДНИКЕ  создай 3 индивидуальные концепции праздника:
+Бюджетная — интересный праздник с минимальными затратами.
+Оптимальная — баланс стоимости, качества и развлечений.
+Премиальная — максимально яркие впечатления с дополнительными услугами.
+Для каждой концепции укажи:
+Название праздника.
+Основную идею и тематику.
+Оформление.
+Развлечения и активности.
+Краткий сценарий.
+Продолжительность.
+Примерную стоимость.
+Все предложения должны учитывать возраст детей, бюджет и пожелания клиента. Не представляй вымышленные цены как реальные.
+Правила поведения LLM
+Общайся дружелюбно и профессионально.
+Не задавай все вопросы одновременно.
+Запоминай информацию в рамках диалога.
+Адаптируй рекомендации под ответы клиента.
+Если информации достаточно, переходи к генерации концепций.
+Если клиент меняет пожелания, обновляй предложения.
+Не придумывай ответы за клиента.
+Объясняй, почему предложенная концепция ему подходит.
+
+ИНФОРМАЦИЯ О ПРАЗДНИКЕ:
+
+Роль заказчика: {data.client_role}
+Событие: {data.event}
+Возраст виновника торжества: {data.celebrant_age}
+Тема: {data.theme}
+Гости: {data.guests}
+Место: {data.location}
+Бюджет: {data.budget}
+Пожелания: {data.wishes}
+Опасения: {data.concerns}
+Критерии успеха: {data.success_criteria}
+
+
 """
 
     try:

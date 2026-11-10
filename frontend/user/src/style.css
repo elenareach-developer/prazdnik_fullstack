@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f6f4f1; color: #292522; font-family: Inter, system-ui, sans-serif; }
+button, input, textarea { font: inherit; }
+.shell { max-width: 900px; margin: 0 auto; padding: 36px 22px 60px; }
+header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.eyebrow { color: #9b684f; letter-spacing: .13em; font-size: 11px; font-weight: 800; }
+h1 { font-size: 38px; margin: 4px 0; }
+.subtitle, .panel > p { color: #77716b; }
+.connection { display: flex; align-items: center; gap: 9px; color: #68615b; font-size: 13px; flex-wrap: wrap; max-width: 340px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #b6a99c; }
+nav { display: flex; gap: 8px; margin: 28px 0 18px; flex-wrap: wrap; }
+nav button, .small { border: 1px solid #e4ded7; background: white; color: #514a44; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+nav button.active { background: #4e4037; color: white; border-color: #4e4037; }
+.panel { background: white; border: 1px solid #ebe5df; border-radius: 18px; padding: 26px; box-shadow: 0 8px 30px #3d2c1b0a; }
+h2 { margin-top: 0; }
+form { display: grid; gap: 16px; margin-top: 22px; }
+label { display: grid; gap: 7px; font-weight: 650; font-size: 14px; }
+input, textarea { width: 100%; border: 1px solid #ddd5cd; border-radius: 10px; padding: 12px; background: #fff; color: #292522; }
+textarea { min-height: 90px; resize: vertical; }
+.primary { background: #8c5d46; border: 0; color: white; padding: 12px 18px; border-radius: 10px; cursor: pointer; font-weight: 700; justify-self: start; }
+.primary:hover { background: #704833; }
+.notice { background: #edf5ed; border: 1px solid #d7e8d6; padding: 12px 15px; border-radius: 10px; margin: 14px 0; }
+.ideas { margin-top: 28px; }
+.idea { background: #faf8f6; border: 1px solid #eee8e2; padding: 13px 15px; border-radius: 10px; margin: 10px 0; }
+.idea p { margin-bottom: 0; }
+.muted, footer { color: #8b837c; font-size: 13px; }
+pre { background: #f7f5f2; border-radius: 10px; padding: 14px; overflow: auto; }
+footer { text-align: center; margin-top: 26px; }
+@media (max-width: 600px) { .shell { padding: 24px 14px; } .panel { padding: 19px; } h1 { font-size: 32px; } }

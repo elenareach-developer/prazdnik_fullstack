@@ -1,0 +1,240 @@
+
+.worker-dashboard {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 24px;
+    color: #292521;
+    font-family: Inter, system-ui, sans-serif;
+  }
+  
+  .worker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 28px;
+    border-radius: 18px;
+  }
+  
+  .worker-eyebrow {
+    color: #987052;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+  
+  .worker-header h1 {
+    margin: 8px 0;
+    font-size: 34px;
+  }
+  
+  .worker-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #ead9c8;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .worker-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  
+  .worker-stat {
+    padding: 22px;
+    border-radius: 14px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .worker-stat span {
+    color: #81766c;
+    font-size: 14px;
+  }
+  
+  .worker-stat strong {
+    font-size: 28px;
+  }
+  
+  .worker-progress {
+    padding: 22px;
+    background: white;
+    border-radius: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .progress-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .progress-track {
+    height: 10px;
+    background: #eee7e0;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: #7f9b79;
+    transition: width 0.3s ease;
+  }
+  
+  .worker-controls {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+  }
+  
+  .worker-controls label {
+    flex: 1;
+    display: grid;
+    gap: 8px;
+  }
+  
+  .worker-controls input,
+  .worker-controls select,
+  .task-comment textarea {
+    padding: 11px;
+    border: 1px solid #ded6cf;
+    border-radius: 9px;
+    background: white;
+    font: inherit;
+  }
+  
+  .worker-task-list {
+    display: grid;
+    gap: 16px;
+  }
+  
+  .worker-task {
+    background: white;
+    border: 1px solid #eee4dc;
+    border-radius: 16px;
+    padding: 22px;
+  }
+  
+  .task-completed {
+    background: #f8fbf7;
+    border-color: #d8e6d4;
+  }
+  
+  .task-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  
+  .task-top h3 {
+    margin: 12px 0;
+  }
+  
+  .task-status {
+    font-size: 12px;
+    font-weight: 700;
+  }
+  
+  .status-completed {
+    color: #507b4d;
+  }
+  
+  .status-pending {
+    color: #b47a37;
+  }
+  
+  .task-priority {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    height: fit-content;
+  }
+  
+  .priority-high {
+    background: #f8e3df;
+    color: #a3473b;
+  }
+  
+  .priority-medium {
+    background: #f6edd9;
+    color: #98722b;
+  }
+  
+  .priority-low {
+    background: #e8eee8;
+    color: #557455;
+  }
+  
+  .task-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: #81766c;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+  
+  .task-comment {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  
+  .task-comment textarea {
+    min-height: 70px;
+    resize: vertical;
+  }
+  
+  .task-button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font: inherit;
+  }
+  
+  .task-button.primary {
+    background: #7f4f38;
+    color: white;
+  }
+  
+  .task-button.secondary {
+    background: #e5eee2;
+    color: #42633e;
+  }
+  
+  .worker-empty,
+  .worker-error {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  
+  .worker-error {
+    color: #a3473b;
+  }
+  
+  @media (max-width: 600px) {
+    .worker-summary {
+      grid-template-columns: 1fr;
+    }
+  
+    .worker-controls {
+      flex-direction: column;
+    }
+  
+    .task-top {
+      flex-direction: column;
+    }
+  }
+  

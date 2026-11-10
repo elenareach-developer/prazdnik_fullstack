@@ -23,7 +23,7 @@ python -m pip install -r requirements.txt
 # Запуск FastAPI
 uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
-
+//ToDo creane .env look exaple
 **Одной строкой**
 ```
 cd backend
@@ -51,6 +51,25 @@ uvicorn appG:app --reload --host 127.0.0.1 --port 8000
 **Остановка сервера:** `Ctrl + C`
 
 ## Запуск frontend
+Worker 
+cd frontend
+cd worker
+npm install
+npm run dev
+
+user 
+cd frontend
+cd user
+npm install
+npm run dev 
+
+admin 
+cd frontend
+cd admin
+npm install
+npm run dev 
+
+
 В другом терминале:
 ```bash
 cd frontend
