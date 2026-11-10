@@ -1,0 +1,658 @@
+/* =====================================================================
+   Sakura Festival theme.
+   Everything is scoped to .sakura-theme or prefixed with "sakura-",
+   so the existing app styles keep working unchanged without the theme.
+   ===================================================================== */
+
+.sakura-theme {
+  --sakura-bg: #FFF7FA;
+  --sakura-blush: #F8DCE8;
+  --sakura-pink: #F4A9C4;
+  --sakura-rose: #E98BAF;
+  --sakura-text: #493642;
+  --sakura-gold: #D9B56D;
+  --sakura-sky: #E8F1FC;
+
+  --sakura-text-soft: #7d6572;
+  --sakura-rose-deep: #c9668e;
+  --sakura-surface: rgba(255, 255, 255, 0.86);
+  --sakura-border: rgba(233, 139, 175, 0.28);
+  --sakura-glow: 0 10px 30px rgba(233, 139, 175, 0.22);
+  --sakura-shadow: 0 8px 28px rgba(73, 54, 66, 0.07);
+  --sakura-radius: 20px;
+  --sakura-ease: cubic-bezier(.22, .8, .32, 1);
+
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--sakura-text);
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+html:has(.sakura-theme), html:has(.sakura-theme) body {
+  background: #FFF7FA;
+  overflow-x: hidden;
+}
+
+/* ---------- Layers: background (0) → petals (1) → content (2) ---------- */
+
+.sakura-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(248, 220, 232, 0.9), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(232, 241, 252, 0.9), transparent 60%),
+    linear-gradient(180deg, #FFF7FA 0%, #FDF0F5 55%, #F7EEF6 100%);
+}
+
+.sakura-sun {
+  position: absolute;
+  right: 12%;
+  bottom: 22vh;
+  width: min(28vw, 260px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 181, 109, 0.28), rgba(244, 169, 196, 0.12) 55%, transparent 70%);
+}
+
+.sakura-landscape {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: min(34vh, 320px);
+}
+
+.sakura-theme .sakura-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Falling petals ---------- */
+
+.sakura-petals {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: var(--sakura-opacity, 0.8);
+  contain: strict;
+}
+
+.sakura-petal {
+  position: absolute;
+  top: -40px;
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  will-change: transform, opacity;
+  animation: sakura-fall calc(var(--dur) / var(--sakura-speed, 1)) linear var(--delay) infinite;
+}
+
+.sakura-petal--blink {
+  animation-name: sakura-fall-blink;
+}
+
+.sakura-petal > i,
+.sakura-intro-petal,
+.sakura-burst-petal {
+  display: block;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FDE6EF'/%3E%3Cstop offset='1' stop-color='%23F4A9C4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M12 23C3 16 3 7 8.5 1.5L12 5l3.5-3.5C21 7 21 16 12 23z' fill='url(%23g)'/%3E%3Cpath d='M12 21C9 16 9.5 10 12 6.5' stroke='%23E98BAF' stroke-width='.6' fill='none' opacity='.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.sakura-petal > i {
+  width: 100%;
+  height: 100%;
+  opacity: var(--alpha);
+  animation: sakura-sway calc(var(--sway-dur) / var(--sakura-speed, 1)) ease-in-out var(--delay) infinite alternate;
+}
+
+@keyframes sakura-fall {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate3d(var(--drift), calc(100vh + 80px), 0); opacity: 0; }
+}
+
+@keyframes sakura-fall-blink {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  8%   { opacity: 1; }
+  40%  { opacity: 1; }
+  50%  { opacity: 0; }
+  60%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate3d(var(--drift), calc(100vh + 80px), 0); opacity: 0; }
+}
+
+@keyframes sakura-sway {
+  0%   { transform: translateX(calc(var(--amp) * -1)) rotate(0deg) rotateX(0deg); }
+  100% { transform: translateX(var(--amp)) rotate(var(--rot)) rotateX(55deg); }
+}
+
+/* ---------- Intro: petals sweep before the interface appears ---------- */
+
+.sakura-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 247, 250, 0.95), rgba(248, 220, 232, 0.85));
+  animation: sakura-intro-fade 1.6s ease forwards;
+}
+
+.sakura-intro-petal {
+  position: absolute;
+  top: var(--y);
+  left: -40px;
+  width: var(--size);
+  height: var(--size);
+  animation: sakura-intro-fly 1.3s var(--sakura-ease) var(--delay) both;
+}
+
+@keyframes sakura-intro-fly {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  to   { transform: translate3d(calc(100vw + 80px), var(--rise), 0) rotate(var(--rot)); opacity: 0.2; }
+}
+
+@keyframes sakura-intro-fade {
+  0%, 45% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+.sakura-enter {
+  animation: sakura-rise 0.9s var(--sakura-ease) 0.55s both;
+}
+
+@keyframes sakura-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.sakura-fade-in {
+  animation: sakura-rise 0.6s var(--sakura-ease) both;
+}
+
+/* ---------- Typography & existing layout, themed ---------- */
+
+.sakura-theme h1,
+.sakura-theme h2,
+.sakura-theme h3 {
+  color: var(--sakura-text);
+  letter-spacing: -0.01em;
+}
+
+.sakura-theme h1 {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-weight: 600;
+}
+
+.sakura-theme .eyebrow {
+  color: var(--sakura-rose-deep);
+}
+
+.sakura-theme .subtitle,
+.sakura-theme .panel > p,
+.sakura-theme .muted,
+.sakura-theme footer {
+  color: var(--sakura-text-soft);
+}
+
+.sakura-theme .panel {
+  background: var(--sakura-surface);
+  border: 1px solid var(--sakura-border);
+  border-radius: var(--sakura-radius);
+  box-shadow: var(--sakura-shadow);
+}
+
+.sakura-theme input,
+.sakura-theme textarea,
+.sakura-theme select {
+  border: 1px solid #ecd3de;
+  background: #fffdfe;
+  color: var(--sakura-text);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.sakura-theme input:focus,
+.sakura-theme textarea:focus,
+.sakura-theme select:focus {
+  outline: none;
+  border-color: var(--sakura-rose);
+  box-shadow: 0 0 0 4px rgba(244, 169, 196, 0.25);
+}
+
+.sakura-theme input[type="range"] {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  accent-color: var(--sakura-rose);
+}
+
+.sakura-theme input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--sakura-rose);
+}
+
+.sakura-theme nav button {
+  border: 1px solid var(--sakura-border);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--sakura-text);
+  border-radius: 999px;
+  transition: background .25s ease, color .25s ease, box-shadow .25s ease, transform .15s ease;
+}
+
+.sakura-theme nav button:hover {
+  background: #fff;
+  box-shadow: var(--sakura-glow);
+}
+
+.sakura-theme nav button.active {
+  background: linear-gradient(135deg, var(--sakura-rose), var(--sakura-pink));
+  border-color: transparent;
+  color: #fff;
+}
+
+.sakura-theme nav button:active { transform: scale(0.97); }
+
+.sakura-theme .notice {
+  background: #fff;
+  border: 1px solid var(--sakura-border);
+  color: var(--sakura-text);
+}
+
+.sakura-theme .error {
+  color: #9b3555;
+  background: #fff0f4;
+  border: 1px solid #f3c4d4;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.sakura-theme .portrait-result,
+.sakura-theme .idea,
+.sakura-theme pre {
+  background: rgba(255, 247, 250, 0.9);
+  border: 1px solid var(--sakura-border);
+}
+
+.sakura-theme summary {
+  color: var(--sakura-rose-deep);
+}
+
+/* ---------- SakuraButton ---------- */
+
+.sakura-btn {
+  font: inherit;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 12px 22px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .2s var(--sakura-ease, ease), box-shadow .25s ease, background-position .4s ease, opacity .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sakura-btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, #E98BAF 0%, #F4A9C4 50%, #E98BAF 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 6px 18px rgba(233, 139, 175, 0.35);
+}
+
+.sakura-btn--secondary {
+  color: var(--sakura-text, #493642);
+  background: #fff;
+  border-color: rgba(233, 139, 175, 0.45);
+}
+
+.sakura-btn--ghost {
+  color: var(--sakura-rose-deep, #c9668e);
+  background: transparent;
+  padding: 8px 14px;
+}
+
+.sakura-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background-position: 100% 0;
+  box-shadow: 0 10px 26px rgba(233, 139, 175, 0.4);
+}
+
+.sakura-btn--secondary:hover:not(:disabled),
+.sakura-btn--ghost:hover:not(:disabled) {
+  box-shadow: 0 6px 18px rgba(233, 139, 175, 0.22);
+}
+
+.sakura-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.sakura-btn:focus-visible {
+  outline: 3px solid rgba(217, 181, 109, 0.75);
+  outline-offset: 2px;
+}
+
+.sakura-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ---------- SakuraCard ---------- */
+
+.sakura-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: linear-gradient(160deg, #ffffff 0%, #fff7fa 100%);
+  background-size: 100% 200%;
+  border: 1px solid var(--sakura-border, rgba(233, 139, 175, 0.28));
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 14px rgba(73, 54, 66, 0.05);
+  animation: sakura-rise .6s var(--sakura-ease, ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+  transition: transform .3s var(--sakura-ease, ease), box-shadow .3s ease, background-position .4s ease, border-color .3s ease;
+}
+
+button.sakura-card { cursor: pointer; }
+
+.sakura-card:hover {
+  transform: translateY(-3px);
+  background-position: 0 100%;
+  border-color: rgba(233, 139, 175, 0.55);
+  box-shadow: var(--sakura-glow, 0 10px 30px rgba(233, 139, 175, 0.22));
+}
+
+.sakura-card.is-active {
+  border-color: var(--sakura-rose, #E98BAF);
+  background: linear-gradient(160deg, #fff 0%, #F8DCE8 100%);
+  box-shadow: var(--sakura-glow, 0 10px 30px rgba(233, 139, 175, 0.22));
+}
+
+.sakura-card:focus-visible {
+  outline: 3px solid rgba(217, 181, 109, 0.75);
+  outline-offset: 2px;
+}
+
+/* ---------- SakuraLoader ---------- */
+
+.sakura-loader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  border-radius: 16px;
+  background: rgba(255, 247, 250, 0.95);
+  border: 1px dashed rgba(233, 139, 175, 0.5);
+  color: var(--sakura-text-soft, #7d6572);
+  font-weight: 600;
+  animation: sakura-rise .4s ease both;
+}
+
+.sakura-loader svg {
+  width: 110px;
+  height: 44px;
+  flex: none;
+}
+
+.sakura-bloom .sakura-flower-inner {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sakura-bloom 2.4s ease-in-out infinite;
+}
+
+.sakura-bloom--2 .sakura-flower-inner { animation-delay: .4s; }
+.sakura-bloom--3 .sakura-flower-inner { animation-delay: .8s; }
+
+@keyframes sakura-bloom {
+  0%, 100% { transform: scale(0.25) rotate(0deg); opacity: .5; }
+  45%, 70% { transform: scale(1) rotate(25deg); opacity: 1; }
+}
+
+/* ---------- SakuraCelebration ---------- */
+
+.sakura-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow: hidden;
+  background: rgba(255, 247, 250, 0.35);
+  animation: sakura-celebration-out 3.2s ease forwards;
+  cursor: pointer;
+}
+
+.sakura-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+
+.sakura-burst-petal {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2);
+  animation: sakura-burst 1.6s cubic-bezier(.15, .7, .3, 1) forwards;
+}
+
+@keyframes sakura-burst {
+  from { transform: rotate(var(--angle)) translateX(0) rotate(0deg) scale(.4); opacity: 1; }
+  to   { transform: rotate(var(--angle)) translateX(var(--dist)) rotate(var(--spin)) scale(1); opacity: 0; }
+}
+
+.sakura-celebration-message {
+  position: relative;
+  margin: 0;
+  max-width: min(420px, 100%);
+  padding: 18px 26px;
+  text-align: center;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--sakura-text, #493642);
+  font-weight: 700;
+  font-size: 18px;
+  border: 1px solid rgba(233, 139, 175, 0.4);
+  box-shadow: 0 16px 40px rgba(233, 139, 175, 0.35);
+  animation: sakura-pop .55s var(--sakura-ease, ease) .15s both;
+}
+
+@keyframes sakura-pop {
+  from { transform: scale(.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes sakura-celebration-out {
+  0%, 82% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+/* ---------- SakuraControls ---------- */
+
+.sakura-controls {
+  position: relative;
+  font-size: 13px;
+}
+
+.sakura-controls summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--sakura-border, rgba(233, 139, 175, 0.28));
+  box-shadow: 0 4px 14px rgba(233, 139, 175, 0.15);
+  font-weight: 700;
+  user-select: none;
+}
+
+.sakura-controls summary::-webkit-details-marker { display: none; }
+
+.sakura-controls-body {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  width: min(260px, calc(100vw - 32px));
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--sakura-border, rgba(233, 139, 175, 0.28));
+  border-radius: 16px;
+  box-shadow: var(--sakura-glow, 0 10px 30px rgba(233, 139, 175, 0.22));
+}
+
+.sakura-controls-body label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.sakura-controls-body .sakura-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sakura-controls-note {
+  margin: 0;
+  color: var(--sakura-text-soft, #7d6572);
+}
+
+/* ---------- Header & hero ---------- */
+
+.sakura-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sakura-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sakura-branch {
+  display: block;
+  pointer-events: none;
+}
+
+.sakura-header-branch {
+  position: absolute;
+  top: -30px;
+  right: -40px;
+  width: min(300px, 60vw);
+  opacity: .9;
+  z-index: -1;
+}
+
+.sakura-hero {
+  position: relative;
+  margin: 18px 0 28px;
+  padding: clamp(28px, 6vw, 56px) clamp(20px, 5vw, 48px);
+  border-radius: 28px;
+  background:
+    radial-gradient(500px 260px at 100% 0%, rgba(248, 220, 232, .9), transparent 70%),
+    linear-gradient(160deg, rgba(255, 255, 255, .92), rgba(255, 247, 250, .88));
+  border: 1px solid var(--sakura-border);
+  box-shadow: var(--sakura-shadow);
+  overflow: hidden;
+}
+
+.sakura-hero h2 {
+  position: relative;
+  max-width: 560px;
+  margin: 8px 0 12px;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: clamp(28px, 5.4vw, 46px);
+  line-height: 1.12;
+}
+
+.sakura-hero p {
+  position: relative;
+  max-width: 440px;
+  margin: 0 0 24px;
+  color: var(--sakura-text-soft);
+  font-size: clamp(16px, 2.2vw, 19px);
+}
+
+.sakura-hero-kicker {
+  position: relative;
+  color: var(--sakura-gold);
+  font-weight: 800;
+  letter-spacing: .18em;
+  font-size: 12px;
+}
+
+.sakura-hero .sakura-btn {
+  position: relative;
+  font-size: 17px;
+  padding: 14px 28px;
+}
+
+.sakura-hero-branch {
+  position: absolute;
+  right: -30px;
+  top: -10px;
+  width: min(380px, 55%);
+  opacity: .95;
+}
+
+@media (max-width: 600px) {
+  .sakura-hero-branch {
+    width: 62%;
+    right: -40px;
+    top: -24px;
+    opacity: .45;
+  }
+  .sakura-header-branch {
+    right: -60px;
+    opacity: .5;
+  }
+}
+
+/* ---------- Reduced motion: no movement, instant states ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sakura-theme *,
+  .sakura-theme *::before,
+  .sakura-theme *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 1ms !important;
+  }
+  .sakura-petals,
+  .sakura-intro,
+  .sakura-burst {
+    display: none !important;
+  }
+  .sakura-celebration,
+  .sakura-bloom .sakura-flower-inner {
+    animation: none !important;
+  }
+  .sakura-card:hover,
+  .sakura-btn:hover:not(:disabled) {
+    transform: none;
+  }
+}

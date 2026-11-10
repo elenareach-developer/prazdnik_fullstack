@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { adminApi } from "./api";
+import { SakuraButton, SakuraLoader } from "../../shared/sakura";
 
 export default function ClientPortrait() {
 
@@ -169,20 +170,28 @@ export default function ClientPortrait() {
         </label>
 
         <div className="actions">
-          <button className="primary" type="submit" disabled={!!loading}>
+          <SakuraButton type="submit" disabled={!!loading}>
             {loading === "portrait"
               ? "AI анализирует..."
               : "Создать эмоциональный портрет"}
-          </button>
+          </SakuraButton>
 
-          <button className="primary" type="button" disabled={!!loading} onClick={() => run("concepts")}>
+          <SakuraButton disabled={!!loading} onClick={() => run("concepts")}>
             {loading === "concepts"
               ? "AI придумывает..."
               : "3 концепции праздника"}
-          </button>
+          </SakuraButton>
         </div>
 
       </form>
+
+      {loading && (
+        <SakuraLoader
+          text={loading === "portrait"
+            ? "Составляем портрет заказчика..."
+            : "Подбираем идеи для вашего праздника..."}
+        />
+      )}
 
       {error && (
         <p className="error">
@@ -191,7 +200,7 @@ export default function ClientPortrait() {
       )}
 
       {portrait && (
-        <section className="portrait-result">
+        <section className="portrait-result sakura-fade-in">
 
           <h3>Портрет заказчика</h3>
 
@@ -203,7 +212,7 @@ export default function ClientPortrait() {
       )}
 
       {concepts && (
-        <section className="portrait-result">
+        <section className="portrait-result sakura-fade-in">
 
           <h3>Концепции праздника</h3>
 
