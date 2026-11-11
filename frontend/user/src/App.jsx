@@ -10,6 +10,7 @@ import {
   SakuraIntro,
   useSakuraSettings,
 } from "../../shared/sakura";
+import CustomerVoiceAssistant from "./CustomerVoiceAssistant";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
@@ -54,6 +55,7 @@ export default function App() {
   const [creating, setCreating] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const [myOrders, setMyOrders] = useState([]);
+  const [voiceCelebrationId, setVoiceCelebrationId] = useState(null);
   const [author, setAuthor] = useState("");
   const [ideaText, setIdeaText] = useState("");
   const [ideas, setIdeas] = useState([]);
@@ -204,6 +206,7 @@ export default function App() {
           <button className={page === "create" ? "active" : ""} onClick={() => setPage("create")}>1. Создать праздник</button>
           <button className={page === "ideas" ? "active" : ""} onClick={() => setPage("ideas")}>2. Идеи гостей</button>
           <button className={page === "plan" ? "active" : ""} onClick={() => setPage("plan")}>3. План</button>
+          <button className={page === "voice" ? "active" : ""} onClick={() => setPage("voice")}>4. 🎙 Помощник</button>
         </nav>
 
         {message && <div className="notice sakura-fade-in">{message}</div>}
@@ -238,6 +241,13 @@ export default function App() {
                       <strong>#{item.id} · {item.celebration_type}</strong>
                       <p className="muted">{item.date} · бюджет {item.budget}{item.theme ? ` · ${item.theme}` : ""}</p>
                       <span className="sakura-status">{item.status}</span>
+                      <SakuraButton
+                        variant="ghost"
+                        className="voice-open"
+                        onClick={() => { setVoiceCelebrationId(item.id); setPage("voice"); }}
+                      >
+                        🎙 Обсудить с помощником
+                      </SakuraButton>
                     </SakuraCard>
                   ))}
                 </div>
@@ -278,6 +288,14 @@ export default function App() {
             </>}
           </section>
         )}
+        {page === "voice" && (
+          <CustomerVoiceAssistant
+            celebrations={myOrders}
+            initialCelebrationId={voiceCelebrationId}
+            onDataChanged={loadMyOrders}
+          />
+        )}
+
         <footer>Праздник · Sakura Festival · React + FastAPI</footer>
       </main>
     </div>
