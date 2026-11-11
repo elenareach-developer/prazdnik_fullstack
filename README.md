@@ -22,7 +22,13 @@ frontend/
 backend-1/               старый пример работы с LLM (не используется приложением)
 ```
 
-## Запуск backend
+## Запуск
+
+Каждое приложение запускается отдельно, в своём терминале. Сначала backend, потом нужные фронтенды.
+
+### Backend (FastAPI) — http://localhost:8000
+
+Пошагово:
 
 ```bash
 cd backend
@@ -40,6 +46,12 @@ python -m pip install -r requirements.txt
 
 # Запуск
 uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Одной строкой (Mac / Linux):
+
+```bash
+cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 > ⚠️ Точка входа — `main:app`. Команда `uvicorn app:app` выдаст
@@ -63,36 +75,70 @@ GEMINI_API_KEY=ваш-ключ
 
 Остановка сервера: `Ctrl + C`.
 
-## Запуск frontend
+### User (клиент) — http://localhost:5174
 
-Каждое приложение запускается отдельно, в своём терминале (backend должен работать):
-
-**User (клиент)** — http://localhost:5174
+Пошагово:
 
 ```bash
 cd frontend/user
+
+# Установка зависимостей (первый раз)
 npm install
+
+# Запуск
 npm run dev
 ```
 
-**Admin (администратор)** — http://localhost:5173
+Одной строкой:
+
+```bash
+cd frontend/user && npm install && npm run dev
+```
+
+### Admin (администратор) — http://localhost:5173
+
+Пошагово:
 
 ```bash
 cd frontend/admin
+
+# Установка зависимостей (первый раз)
 npm install
+
+# Запуск
 npm run dev
 ```
 
-**Worker (сотрудник)**
+Одной строкой:
+
+```bash
+cd frontend/admin && npm install && npm run dev
+```
+
+### Worker (сотрудник)
+
+Пошагово:
 
 ```bash
 cd frontend/worker
+
+# Установка зависимостей (первый раз)
 npm install
+
+# Запуск
 npm run dev
+```
+
+Одной строкой:
+
+```bash
+cd frontend/worker && npm install && npm run dev
 ```
 
 > Worker тоже настроен на порт 5173. Если admin уже запущен, Vite выберет
 > следующий свободный порт — смотрите адрес в терминале.
+
+Остановка любого фронтенда: `Ctrl + C`.
 
 Адрес backend по умолчанию — `http://localhost:8000/api`. Его можно изменить
 файлом `frontend/<app>/.env` со строкой `VITE_API_URL=http://127.0.0.1:8000/api`.
