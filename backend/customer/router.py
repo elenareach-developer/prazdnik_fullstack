@@ -67,3 +67,30 @@ def add_feedback(order_id: int, feedback: dict):
         raise HTTPException(status_code=404, detail="Order not found")
     order["feedback"] = feedback
     return {"message": "Feedback saved", "order_id": order_id}
+
+
+# Guest ideas. Demo in-memory list: data resets when the server restarts.
+IDEAS = []
+_next_idea_id = 1
+
+
+class IdeaCreate(BaseModel):
+    author: str = Field(default="", max_length=60)
+    text: str = Field(min_length=1, max_length=1000)
+
+
+@router.get("/ideas")
+def list_ideas():
+    return {"ideas": IDEAS}
+
+
+@router.post("/ideas")
+def add_idea(idea: IdeaCreate):
+    global _next_idea_id
+    text = idea.text.strip()
+    if not text:
+        raise HTTPException(status_code=422, detail="Текст идеи не может быть пустым")
+    created = {"id": _next_idea_id, "author": idea.author.strip() or "Гость", "text": text}
+    _next_idea_id += 1
+    IDEAS.append(created)
+    return {"message": "Спасибо! Идея добавлена 🌸", "idea": created}

@@ -9,6 +9,13 @@ Supporting modules:
 - `ai/` — LLM access (Gemini) and prompts. Used by Admin only; never imports routers.
 - `shared/orders_store.py` — shared order data. Admin and Customer read/write the same orders.
 
+## Guest ideas (Customer)
+
+- `GET /api/customer/ideas` → `{"ideas": [{"id", "author", "text"}]}`
+- `POST /api/customer/ideas` with `{"author": "", "text": "..."}` (empty author → «Гость»)
+
+In-memory demo list, not linked to a specific order yet.
+
 ## AI (Admin)
 
 Create `backend/.env` from `.env.example` and set `GEMINI_API_KEY`
