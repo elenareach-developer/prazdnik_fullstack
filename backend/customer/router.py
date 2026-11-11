@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-from shared.orders_store import ORDERS, add_order, find_order
+from shared import ideas_store
+from shared.orders_store import ORDERS, add_order, apply_customer_changes, find_order
 
 router = APIRouter()
 
@@ -54,11 +55,7 @@ def update_customer_order(order_id: int, changes: dict):
     order = find_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    allowed = {"theme", "preferences", "wishes", "budget", "date"}
-    for key, value in changes.items():
-        if key in allowed:
-            order[key] = value
-    return order
+    return apply_customer_changes(order, changes)
 
 @router.post("/orders/{order_id}/feedback")
 def add_feedback(order_id: int, feedback: dict):
@@ -69,9 +66,7 @@ def add_feedback(order_id: int, feedback: dict):
     return {"message": "Feedback saved", "order_id": order_id}
 
 
-# Guest ideas. Demo in-memory list: data resets when the server restarts.
-IDEAS = []
-_next_idea_id = 1
+# Guest ideas are stored in shared/ideas_store.py (also used by the Voice Assistant).
 
 
 class IdeaCreate(BaseModel):
@@ -81,16 +76,12 @@ class IdeaCreate(BaseModel):
 
 @router.get("/ideas")
 def list_ideas():
-    return {"ideas": IDEAS}
+    return {"ideas": ideas_store.list_ideas()}
 
 
 @router.post("/ideas")
 def add_idea(idea: IdeaCreate):
-    global _next_idea_id
-    text = idea.text.strip()
-    if not text:
+    if not idea.text.strip():
         raise HTTPException(status_code=422, detail="Текст идеи не может быть пустым")
-    created = {"id": _next_idea_id, "author": idea.author.strip() or "Гость", "text": text}
-    _next_idea_id += 1
-    IDEAS.append(created)
+    created = ideas_store.add_idea(idea.text, idea.author)
     return {"message": "Спасибо! Идея добавлена 🌸", "idea": created}

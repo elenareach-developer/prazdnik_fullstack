@@ -35,3 +35,15 @@ def add_order(data: dict) -> dict:
     _next_order_id += 1
     ORDERS.append(created)
     return created
+
+
+# Fields a customer may change (same rule as PATCH /api/customer/orders/{id}).
+CUSTOMER_EDITABLE_FIELDS = {"theme", "preferences", "wishes", "budget", "date"}
+
+
+def apply_customer_changes(order: dict, changes: dict) -> dict:
+    """Apply only customer-editable fields; anything else is ignored."""
+    for key, value in changes.items():
+        if key in CUSTOMER_EDITABLE_FIELDS:
+            order[key] = value
+    return order

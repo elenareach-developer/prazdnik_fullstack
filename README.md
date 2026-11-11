@@ -12,7 +12,9 @@ backend/                 основной FastAPI backend (точка входа
   admin/                 API администратора      → /api/admin
   customer/              API клиента             → /api/customer
   employee/              API сотрудника          → /api/employee
-  ai/                    AI-модуль (Gemini, промпты), используется только Admin
+  ai/                    AI-модуль (Gemini, промпты): Admin AI и голосовой помощник
+  voice/                 голосовой помощник заказчика → /api/voice
+  tests/                 тесты backend (pytest)
   shared/orders_store.py общие данные заказов для Admin и Customer
 frontend/
   admin/                 панель администратора   → http://localhost:5173
@@ -57,14 +59,24 @@ cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install 
 > ⚠️ Точка входа — `main:app`. Команда `uvicorn app:app` выдаст
 > `Could not import module "app"`.
 
-**AI-функции админки.** Скопируйте `backend/.env.example` в `backend/.env` и впишите ключ:
+**AI и голосовой помощник.** Скопируйте `backend/.env.example` в `backend/.env` и заполните:
 
 ```
-GEMINI_API_KEY=ваш-ключ
-# GEMINI_MODEL=gemini-3.5-flash-lite   (необязательно)
+GEMINI_API_KEY=ваш-ключ          # LLM: Admin AI и ответы голосового помощника
+STT_PROVIDER=faster_whisper      # распознавание речи: faster_whisper (локально) или openai_whisper
+STT_API_KEY=                     # нужен только для openai_whisper
 ```
 
-Без ключа сервер запускается, но AI-эндпоинты отвечают 503.
+Без ключей сервер запускается, но AI- и голосовые эндпоинты отвечают 503.
+При `faster_whisper` модель (`STT_MODEL`, по умолчанию `small`) скачивается один раз при первом запросе — нужен интернет.
+
+**Тесты backend:**
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+python -m pytest tests
+```
 
 | Что | Адрес |
 |---|---|
@@ -149,6 +161,7 @@ cd frontend/worker && npm install && npm run dev
 - Главный экран «Каждый праздник — своя история» и кнопка «Создать праздник».
 - «Создать праздник»: заказ сохраняется через `POST /api/customer/orders`, после чего показывается анимация «Ваш праздник начинает расцветать!» и список праздников.
 - «Идеи гостей»: добавление и просмотр идей (`/api/customer/ideas`).
+- «🎙 Помощник»: голосовой помощник по выбранному празднику. Микрофон → распознавание речи → ответ LLM с учётом праздника → озвучивание в браузере. Можно и написать текстом. Изменения (новая идея, бюджет, тема, дата, пожелания) выполняются только после кнопки «Подтвердить».
 - Проверка связи с backend.
 
 **Admin — панель администратора**
@@ -169,6 +182,9 @@ cd frontend/worker && npm install && npm run dev
 | Customer | `POST /api/customer/orders/{id}/feedback` | отзыв |
 | Customer | `GET /api/customer/packages` | пакеты услуг |
 | Customer | `GET/POST /api/customer/ideas` | идеи гостей |
+| Voice | `POST /api/voice/transcribe` | речь → текст (multipart, поле `audio`, ≤ `VOICE_MAX_AUDIO_MB`) |
+| Voice | `POST /api/voice/chat` | сообщение + контекст праздника → ответ помощника и предложенное действие |
+| Voice | `POST /api/voice/actions/confirm` | подтвердить или отменить действие помощника |
 | Admin | `GET /api/admin/dashboard`, `GET /api/admin/orders` | статистика и заказы |
 | Admin | `POST /api/admin/orders/{id}/analyze` | AI-портрет заказчика |
 | Admin | `POST /api/admin/orders/{id}/concepts` | AI: 3 концепции праздника |
@@ -183,6 +199,8 @@ cd frontend/worker && npm install && npm run dev
 - Worker обращается к `/api/worker/tasks`, а в backend есть `/api/employee/tasks`.
 - Данные хранятся в памяти и пропадают при перезапуске backend; базы данных нет.
 - Авторизации нет: клиент видит все заказы, сотрудник — все задачи.
+  Голосовой помощник проверяет доступ в одном месте (`backend/voice/access.py`) — сейчас в демо-режиме.
+- История голосовых диалогов хранится в памяти backend (`voice/conversation_store.py`).
 
 ## Частые проблемы
 
@@ -193,3 +211,6 @@ cd frontend/worker && npm install && npm run dev
 | AI отвечает 503 | нет `GEMINI_API_KEY` в `backend/.env` |
 | AI отвечает 502 | ошибка Gemini (лимит, перегрузка, регион); подробности в терминале uvicorn |
 | `ModuleNotFoundError: google` | выполните `pip install -r requirements.txt` ещё раз |
+| Помощник: «Нет доступа к микрофону» | разрешите микрофон для `localhost` в настройках браузера |
+| Помощник: «Модель распознавания речи не загрузилась» | первый запуск faster-whisper требует интернет; проверьте `STT_MODEL` |
+| Помощник не озвучивает ответы | проверьте переключатель «Озвучивать ответы» и наличие голосов в системе |

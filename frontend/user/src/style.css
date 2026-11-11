@@ -37,3 +37,4 @@ footer { text-align: center; margin-top: 26px; }
 .sakura-status { display: inline-block; font-size: 12px; font-weight: 700; color: #c9668e; background: #F8DCE8; border-radius: 999px; padding: 3px 10px; }
 .sakura-theme .idea.sakura-card { margin: 10px 0; }
 @media (max-width: 600px) { .sakura-form-row { grid-template-columns: 1fr; } }
+.sakura-card-grid .voice-open { display: block; margin-top: 8px; padding-left: 0; }

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from admin.router import router as admin_router
 from customer.router import router as customer_router
 from employee.router import router as employee_router
+from voice.router import router as voice_router
 
 app = FastAPI(
     title="Prazdnik API",
@@ -22,6 +23,7 @@ app.add_middleware(
 app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
 app.include_router(customer_router, prefix="/api/customer", tags=["Customer"])
 app.include_router(employee_router, prefix="/api/employee", tags=["Employee"])
+app.include_router(voice_router, prefix="/api/voice", tags=["Voice Assistant"])
 
 
 @app.get("/api/health")
