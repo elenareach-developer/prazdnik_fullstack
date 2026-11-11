@@ -113,30 +113,32 @@ export default function App() {
 
   async function loadIdeas() {
     try {
-      const response = await fetch(`${API}/ideas`);
+      const response = await fetch(`${API}/customer/ideas`);
       const data = await response.json();
-      setIdeas(data.ideas);
+      if (!response.ok) throw new Error();
+      setIdeas(data.ideas || []);
     } catch {
-      setMessage("Не удалось загрузить идеи с backend.");
+      setError("Не удалось загрузить идеи с backend.");
     }
   }
 
   async function submitIdea(e) {
     e.preventDefault();
     setMessage("");
+    setError("");
     try {
-      const response = await fetch(`${API}/ideas`, {
+      const response = await fetch(`${API}/customer/ideas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ author, text: ideaText }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Ошибка запроса");
+      if (!response.ok) throw new Error(formatError(data, "Не удалось добавить идею"));
       setIdeaText("");
       setMessage(data.message);
       await loadIdeas();
     } catch (err) {
-      setMessage(err.message);
+      setError(err.message);
     }
   }
 
